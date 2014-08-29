@@ -833,13 +833,15 @@ ctrlparam_handler(void* request, void* response, uint8_t *buffer, uint16_t prefe
       float v_ref=get_ctrl_params(VREF);
       float v_max=get_ctrl_params(VMAX);
       float i_max=get_ctrl_params(IMAX);
+      float v_dis =  get_ctrl_params(VDIS);
+      float v_hyst =  get_ctrl_params(VHYST);
       int prio=get_ctrl_params(PRIO_REF);
 
      if ((num==0) || (num && accept[0]==REST.type.TEXT_PLAIN))
      {
          //PRINTF("Sending CoAP Text/Plain response\n");
          REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
-         snprintf((char *)buffer, REST_MAX_CHUNK_SIZE, "Vref:\t\t%fV\nVmax:\t\t%fV\nImax:\t\t%fA\nPrio:\t\t%d\n", v_ref, v_max, i_max, prio);
+         snprintf((char *)buffer, REST_MAX_CHUNK_SIZE, "Vref:\t\t%fV\nVmax:\t\t%fV\nImax:\t\t%fA\nVdis:\t\t%fV\nVhyst:\t\t%fV\nPrio:\t\t%d\n", v_ref, v_max, i_max, v_dis, v_hyst, prio);
          REST.set_response_payload(response, (uint8_t *)buffer, strlen((char *)buffer));
      }
 
@@ -926,9 +928,11 @@ void do_report(void)
   float v_ref =  get_ctrl_params(VREF);
   float v_max =  get_ctrl_params(VMAX);
   float i_max =  get_ctrl_params(IMAX);
-  
-  printf(" V_REF=%-5.2f V_MAX=%-5.2f I_MAX=%-5.2f\n", 
-	 v_ref, v_max, i_max);
+  float v_dis =  get_ctrl_params(VDIS);
+  float v_hyst =  get_ctrl_params(VHYST);
+
+  printf(" V_REF=%-5.2f V_MAX=%-5.2f I_MAX=%-5.2f V_DIS=%-5.2f V_HYST=%-5.2f\n", 
+	 v_ref, v_max, i_max, v_dis, v_hyst);
 }
 
 void start_bangbang(void) {
