@@ -910,6 +910,27 @@ PROCESS_THREAD(rest_server_example, ev, data)
 #include "contiki-net.h"
 #include <stdio.h>
 
+void do_report(void)
+{
+  printf("&: TXT=DCDC STATE=%s", get_converter_state());
+  
+  float v_in =  get_svector(VIN);
+  float v_out =  get_svector(VOUT);
+  float i_in =  get_svector(IIN);
+  float i_out =  get_svector(IOUT);
+  float prio;
+  
+  printf(" V_IN=%-5.2f V_OUT=%-5.2f I_IN=%-5.2f I_OUT=%-5.2f I_OUT=%-5.2f", 
+	 v_in, v_out, i_in, i_out, prio);
+  
+  float v_ref =  get_ctrl_params(VREF);
+  float v_max =  get_ctrl_params(VMAX);
+  float i_max =  get_ctrl_params(IMAX);
+  
+  printf(" V_REF=%-5.2f V_MAX=%-5.2f I_MAX=%-5.2f\n", 
+	 v_ref, v_max, i_max);
+}
+
 void start_bangbang(void) {
 	GPIOInit();
 	TimerInit();
@@ -923,11 +944,32 @@ PROCESS_THREAD(bangbang_process, ev, data)
 {
 	PROCESS_BEGIN();
 
-		start_bangbang();
-		PRINTF("Bangbang function started!\n");
+	start_bangbang();
+	PRINTF("Bangbang function started!\n");
+	printf("Bangbang function started!\n");
 
 	PROCESS_END();
 }
 
-AUTOSTART_PROCESSES(&bangbang_process, &rest_server_example);
+PROCESS(report_process, "report process");
+
+PROCESS_THREAD(report_process, ev, data)
+{
+	static struct etimer et;
+	PROCESS_BEGIN();
+ 
+	/* Delay 1 second */
+	etimer_set(&et, CLOCK_SECOND);
+ 
+	while(1) {
+		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+		/* Reset the etimer to trig again in 1 second */
+		etimer_reset(&et);
+		do_report();
+		etimer_set(&et, CLOCK_SECOND);
+	}
+	PROCESS_END();
+}
+
+AUTOSTART_PROCESSES(&bangbang_process,&rest_server_example,&report_process);
 
