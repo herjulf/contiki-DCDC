@@ -8,7 +8,7 @@
 #include "lpc17xx.h"
 #include "adc.h"
 #include "control.h"
-#define BOARD_2013
+
 int ADC[ADCChannels];
 int UpdateChannel;
 
