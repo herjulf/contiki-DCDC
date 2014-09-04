@@ -28,6 +28,7 @@
  *
  */
 
+
 #include <stdint.h>
 #include <stdio.h>
 #include <sys/process.h>
@@ -37,9 +38,9 @@
 #include <sys/clock.h>
 #include <contiki-net.h>
 #include <net/dhcpc.h>
+#include "contiki-conf.h"
 #include "debug-uart.h"
 #include "emac-driver.h"
-#include "contiki-conf.h"
 #include <net/uip-debug.h>
 #include "dev/leds-arch.h"
 #include "dev/leds.h"

@@ -69,4 +69,7 @@ typedef unsigned int uip_stats_t;
 
 #define RIMEADDR_CONF_SIZE 8
 
+/* Revison of DCDC board */
+#define BOARD_2013
+
 #endif /* __CONTIKI_CONF_H__ */
