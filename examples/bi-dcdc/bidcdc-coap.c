@@ -970,10 +970,32 @@ PROCESS_THREAD(report_process, ev, data)
 		/* Reset the etimer to trig again in 1 second */
 		etimer_reset(&et);
 		do_report();
+		toggleLeds();
 		etimer_set(&et, CLOCK_SECOND);
 	}
 	PROCESS_END();
 }
 
-AUTOSTART_PROCESSES(&bangbang_process,&rest_server_example,&report_process);
+PROCESS(init_process, "init process");
+
+PROCESS_THREAD(init_process, ev, data)
+{
+	PROCESS_BEGIN();
+ 
+	if (set_ctrl_params(VREF, 6.0))
+                printf("Value out of range: must be 0 <= Vref <= Vmax");
+
+	if (set_ctrl_params(VDIS, 12.0))
+                printf("Error setting VDIS");
+
+	if (set_ctrl_params(VHYST, 2.0))
+                printf("Error setting HYST");
+
+	if (set_ctrl_params(IMAX, 2.0))
+                printf("Error setting IMAX");
+
+	PROCESS_END();
+}
+
+AUTOSTART_PROCESSES(&bangbang_process,&rest_server_example,&report_process,&init_process);
 
