@@ -16,7 +16,8 @@
 
 //UART used for sending printf messages
 //Defined as 0 for UART0 and 1 for UART1
-#define DEBUG_UART      0
+// cpu/arm/lpc1768/debug_frmwrk.h
+
 
 /* Define the MAC address of the device */
 /* 0C 1D 12 E0 1F 10*/
