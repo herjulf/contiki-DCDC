@@ -21,7 +21,7 @@ include $(CONTIKI)/Makefile.include
 
 run: $(CONTIKI_PROJECT).$(TARGET)
 	$(OBJCOPY) -O ihex $(CONTIKI_PROJECT).$(TARGET) $(CONTIKI_PROJECT).ihex
-	sudo lpc21isp -hex $(CONTIKI_PROJECT).ihex /dev/ttyUSB0 115200 12000
+	lpc21isp -hex $(CONTIKI_PROJECT).ihex /dev/ttyUSB0 115200 12000
 
 clean:
-	rm -rf $(OBJDIR) *.$(TARGET) *.a *.map *.ihex
+	rm -rf $(OBJDIR)/* *.$(TARGET) *.a *.map *.ihex
