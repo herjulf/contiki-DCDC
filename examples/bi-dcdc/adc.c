@@ -20,7 +20,7 @@ extern int Vout, Vin, Iref, Il;
 
 void ADCvaluesInit(void);
 
-void ADCInit(void)
+void ADCInit_work(void)
 {
 	LPC_PINCON->PINSEL1 |= 0x00154000;		// Select ADC function for pins (ADC0-3)
 	LPC_PINCON->PINSEL3 |= 0xF0000000;		// Select ADC function for pins (ADC4-5)
@@ -43,22 +43,17 @@ void ADCInit(void)
 	ADCRead(0);								// Start first conversion
 }
 
-void ADCInit_new_need_fix(void)
+void ADCInit(void)
 {
 	LPC_PINCON->PINSEL1 |= 0x00154000;		// Select ADC function for pins (ADC0-3)
-	LPC_PINCON->PINSEL3 |= 0xF0000000;		// Select ADC function for pins (ADC4-5)
 	LPC_PINCON->PINMODE1 |= 0x0002A8000;	// Neither pull-up nor pull-down resistor
-	LPC_PINCON->PINMODE3 |= 0xA00000000;	// Neither pull-up nor pull-down resistor
-	LPC_SC->PCONP |= (1 << 12);				// Set up bit PCADC
-	LPC_SC->PCLKSEL0 |= (01 << 24);			// PCLK = CCLK (102 MHz)
-
-	LPC_PINCON->PINSEL1 |= 0x00154000;		// Select ADC function for pins (ADC0-3)
 	LPC_PINCON->PINSEL3 |= 0xF0000000;		// Select ADC function for pins (ADC4-5)
+	LPC_PINCON->PINMODE3 |= 0xA00000000;	// Neither pull-up nor pull-down resistor
+
 	LPC_PINCON->PINSEL0 &= ~(0x0000000F0);
-	//LPC_PINCON->PINSEL0 |= 0x000000A0;		// Select ADC function for pins (ADC6-7)
-	//LPC_PINCON->PINMODE0 |= 0x000000A0;		// Neither pull-up nor pull-down resistor
-	LPC_PINCON->PINMODE1 |= 0x002A8000;		// Neither pull-up nor pull-down resistor
-	LPC_PINCON->PINMODE3 |= 0xA0000000;		// Neither pull-up nor pull-down resistor
+	LPC_PINCON->PINSEL0 |= 0x000000A0;		// Select ADC function for pins (ADC6-7)
+	LPC_PINCON->PINMODE0 |= 0x000000A0;		// Neither pull-up nor pull-down resistor
+
 	LPC_SC->PCONP |= (1 << 12);				// Set up bit PCADC
 	LPC_SC->PCLKSEL0 |= (01 << 24);			// PCLK = CCLK (102 MHz)
 	/* 7-0 SEL
@@ -70,7 +65,7 @@ void ADCInit_new_need_fix(void)
 	LPC_ADC->ADCR |= 0x00200300;
 	LPC_ADC->ADINTEN = 0x00000100;			// ADC Interrupt Enabled
 	NVIC_EnableIRQ(ADC_IRQn);
-	NVIC_SetPriority(ADC_IRQn, 2);
+	NVIC_SetPriority(ADC_IRQn, 2); // ** 0
 	ADCvaluesInit();						// Init ADC glitch filter
 	UpdateChannel = -1;
 	ADCRead(0);								// Start first conversion
