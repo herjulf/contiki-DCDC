@@ -53,7 +53,7 @@
 int Vref, Imax, Vmax, Vdis, Vhyst;
 int Vout, Vin, Il;
 int Vo, Vi, Io, Ii;
-int i, Vom, Vim, Iom, Iim, Prio;
+int i, Vom, Vim, Iom, Iim, Prio, Enable;
 
 int Iref;
 extern int ADC[4];
@@ -290,11 +290,9 @@ void MeanValues(void)
 void BangBang(void)
 {
 	static int LVD = 0;
-
-	if(LVD && Vin > (Vdis + Vhyst))
-		LVD = 0;
-
-	if(!LVD && (Vin > Vdis) && Vref > 0 && Prio <= Vi)
+	
+	Enable = 1;
+	if(Enable && Vref > 0)
 	{
 		/* Safe maximum voltage limitation (it uses configuration number4) */
 		if (Vout > Vmax)
