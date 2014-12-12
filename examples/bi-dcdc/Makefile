@@ -5,7 +5,7 @@ CONTIKI = ../..
 
 all: CHECK_OBJECTDIR $(CONTIKI_PROJECT)
 
-CONTIKI_TARGET_SOURCEFILES += bang.c control.c adc.c   
+CONTIKI_TARGET_SOURCEFILES += bang.c control.c adc.c vsc.c
 
 CHECK_OBJECTDIR:
 	if [ ! -d "$(OBJDIR)" ]; then mkdir $(OBJDIR);	fi

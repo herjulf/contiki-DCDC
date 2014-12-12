@@ -8,7 +8,8 @@
 #ifndef ADC_H_
 #define ADC_H_
 
-#define ADCChannels 4		//for 2 more current sensor, change this to 8
+//#define ADCChannels 4		//for 2 more current sensor, change this to 8
+#define ADCChannels 6		//for 2 more current sensor, change this to 8
 #define PREFILTER
 #define GlitchBuffer 2
 #define GlitchHyst 1000
