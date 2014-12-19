@@ -54,6 +54,7 @@ int Vref, Imax, Vmax, Vdis, Vhyst;
 int Vout, Vin, Il;
 int Vo, Vi, Io, Ii;
 int i, Vom, Vim, Iom, Iim, Prio, Enable;
+int I0, I1;
 
 int Iref;
 extern int ADC[4];

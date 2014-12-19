@@ -939,6 +939,7 @@ void start_bangbang(void) {
 	GPIOInit();
 	TimerInit();
 	ValueInit();
+	VSC_Init();
 	ADCInit();
 }
 

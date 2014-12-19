@@ -17,6 +17,7 @@ int glitches[ADCChannels];
 int Buffer[2][GlitchBuffer][ADCChannels];
 
 extern int Vout, Vin, Iref, Il;
+extern int I0, I1;
 
 void ADCvaluesInit(void);
 
@@ -101,7 +102,13 @@ LPC_GPIO1->FIOPIN ^= (1 << 29); //old =29
 		Vin = ADCValues(1);
 		Iref = ADCValues(2);
 		Il = ADCValues(3) - Iref;
+		I0 = ADCValues(4);
+		I1 = ADCValues(5);
 		MeanValues();
+		if(1)
+		  VSC_Calc(0);
+		else 
+		  VSC_Calc(0);
 		BangBang();
 
 #ifdef BOARD_2013

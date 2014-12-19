@@ -22,9 +22,10 @@
  */
 
 #include <stdio.h>
-#include <string.h>
+#include <stdint.h>
+#include "control.h"
 
-#define MTDC_MAX 2     /* Max MTDC terminals */
+#define MTDC_MAX 1     /* Max MTDC terminals */
 
 /* 
    DCGRID_MAX to DCGRID_MIN defines the operational voltage interval 
@@ -49,7 +50,7 @@ struct vsc
   double i_min;
 };
 
-void vsc_droop_init(struct vsc *v, int id)
+static void vsc_droop_init(struct vsc *v, int id)
 {
   if(id == 0) {
     v->c1 = DCGRID_MAX;
@@ -68,7 +69,10 @@ void vsc_droop_init(struct vsc *v, int id)
   v->u = v->u_max;
 }
 
-void vsc_droop(struct vsc *v, double i)
+struct vsc t[MTDC_MAX];
+
+
+static void vsc_droop(struct vsc *v, double i)
 {
 
   if(i < v->i_min) {
@@ -86,6 +90,23 @@ void vsc_droop(struct vsc *v, double i)
   }
 }
 
+void VSC_Init(void)
+{
+  double i;
+  int p1; 
+
+  memset(t, 0, sizeof(t));
+
+  for(p1=0; p1 < MTDC_MAX; p1++)
+    vsc_droop_init(&t[p1], p1);
+}
+
+void VSC_Calc(double i)
+{
+  vsc_droop(&t[0], i);
+  
+  set_ctrl_params(VREF, t->u);
+}
 
 #ifdef TEST
 /* A simple test program */
