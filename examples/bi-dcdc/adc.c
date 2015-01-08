@@ -105,10 +105,14 @@ LPC_GPIO1->FIOPIN ^= (1 << 29); //old =29
 		I0 = ADCValues(4);
 		I1 = ADCValues(5);
 		MeanValues();
+
+  float i_in =  get_svector(IIN);
+  float i_out =  get_svector(IOUT);
+
 		if(1)
-		  VSC_Calc(0);
+		  VSC_Calc(i_out);
 		else 
-		  VSC_Calc(0);
+		  VSC_Calc(i_out);
 		BangBang();
 
 #ifdef BOARD_2013

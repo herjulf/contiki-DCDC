@@ -33,8 +33,8 @@
 */
 
 
-#define DCGRID_MAX 15  /* Max Grid Voltage droop */
-#define DCGRID_MIN 12  /* Min Grid Voltage droop */
+#define DCGRID_MAX 6  /* Max Grid Voltage droop */
+#define DCGRID_MIN 3.5  /* Min Grid Voltage droop */
 
 /* Terminal/Converter parameter settings */
 

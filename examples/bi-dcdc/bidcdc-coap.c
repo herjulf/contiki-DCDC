@@ -922,7 +922,7 @@ void do_report(void)
   float i_out =  get_svector(IOUT);
   float prio;
   
-  printf(" V_IN=%-5.2f V_OUT=%-5.2f I_IN=%-5.2f I_OUT=%-5.2f I_OUT=%-5.2f", 
+  printf(" V_IN=%-5.2f V_OUT=%-5.2f I_IN=%-5.2f I_OUT=%-5.2f PRIO=%-3d", 
 	 v_in, v_out, i_in, i_out, prio);
   
   float v_ref =  get_ctrl_params(VREF);
