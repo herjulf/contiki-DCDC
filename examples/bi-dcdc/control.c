@@ -46,22 +46,19 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef ShowPeriodically
-#include "comm.h"
-#endif
+#define MEAN_SAMPLES 5000
 
 int Vref, Imax, Vmax, Vdis, Vhyst;
 int Vout, Vin, Il;
 int Vo, Vi, Io, Ii;
 int i, Vom, Vim, Iom, Iim, Prio, Enable;
 int I0, I1;
-
 int Iref;
+int user_allowed;
+
 extern int ADC[4];
 extern state_t CurrentState;
 extern int UpdateChannel;
-
-int user_allowed;
 
 /* received and transmitted data buffers */
 static uart_buffer_type uart_buf;
@@ -72,222 +69,216 @@ static int echo = 0;
 
 void uart_buf_init(uart_buffer_type *buff)
 {
-        uint16_t i;
-        i = 0;
-        /* copy the welcome message to the transmit buffer */
-        while (welcome_msg[i] != '\0')
-        {
-                buff->tx_buf[i] = welcome_msg[i];
-                i++;
-        }
-        buff->rx_start_index = 0;
-        buff->rx_len = 0;
-        buff->tx_start_index = 0;
-        buff->tx_len = i;
+  uint16_t i;
+  i = 0;
+  /* copy the welcome message to the transmit buffer */
+  while (welcome_msg[i] != '\0')
+    {
+      buff->tx_buf[i] = welcome_msg[i];
+      i++;
+    }
+  buff->rx_start_index = 0;
+  buff->rx_len = 0;
+  buff->tx_start_index = 0;
+  buff->tx_len = i;
 }
-
 
 void break_float(float f, int *integer, int *decimal, int dlen, int base) {
-        *integer = (int)f;
-        f -= *integer;
-        for(; dlen > 0; dlen--) {
-                f *= base;
-        }
-        *decimal = (int)f;
-//      *decimal = 0;
+  *integer = (int)f;
+  f -= *integer;
+  for(; dlen > 0; dlen--) {
+    f *= base;
+  }
+  *decimal = (int)f;
+  //      *decimal = 0;
 }
-
 
 char* get_converter_state(void)
 {
-	/* [todo] new function to get on/off */
-	static char *state_strings[8] = {"BUCK_OFF","BUCK_SOFT","BUCK_ON","BOOST_OFF","BOOST_SOFT","BOOST_ON","DISCHARGE","ALL_OFF"};
-	if (CurrentState == 7)
-		return "OFF";
-	else
-		return "ON";
-//	return state_strings[CurrentState];
+  /* [todo] new function to get on/off */
+  static char *state_strings[8] = {"BUCK_OFF","BUCK_SOFT","BUCK_ON","BOOST_OFF","BOOST_SOFT","BOOST_ON","DISCHARGE","ALL_OFF"};
+
+  if (CurrentState == 7)
+    return "OFF";
+  else
+    return "ON";
+  //	return state_strings[CurrentState];
 }
 
 int set_ctrl_params(ctrl_params_t var, float value)
 {
-	int error=0;
-	float tmp;
-	switch (var)
+  int error=0;
+  float tmp;
+  switch (var)
+    {
+
+    case VREF:
+      if ((value >= 0) && (value <= Vmax))
 	{
-	case VREF:
-			if ((value >= 0) && (value <= Vmax))
-			{
-				tmp = (value * 4095 * DIVIDEND) /(Vdd * DIVIDER);
-				Vref = (int) tmp;
-			}
-			else
-				error=1;
-			break;
-	case VDIS:
-			if ((value >= 0) && (value <= Vmax))
-			{
-				tmp = (value * 4095 * 3) /(Vdd * 28);
-				Vdis = (int) tmp;
-			}
-			else
-				error=1;
-			break;
-	case VHYST:
-			if ((value >= 0) && (value <= Vmax))
-			{
-				tmp = (value * 4095 * 3) /(Vdd * 28);
-				Vhyst = (int) tmp;
-			}
-			else
-				error=1;
-			break;
-	case IMAX:
-			if ((value >= 0) && (value <= 6))
-			{
-				tmp = (value * 4095 * 0.151) / (Vdd * 2);
-				Imax = (int) tmp;
-			}
-			else
-				error=1;
-			break;
-	case VMAX:
-			if ((value >= 0) && (value <= 30))
-			{
-				tmp = (value * 4095 * DIVIDEND) / (Vdd * DIVIDER);
-				Vmax = (int) tmp;
-			}
-			else
-				error=1;
-			break;
-	case PRIO_REF:
-			if ((value >= 5) && (value <= 25))
-			{
-//				Prio = (int) value;
-				Prio = (int)(value * 4095 * DIVIDEND) /(Vdd * DIVIDER);
-			}
-			else
-				error=1;
-			break;
+	  tmp = (value * 4095 * DIVIDEND) /(Vdd * DIVIDER);
+	  Vref = (int) tmp;
 	}
-	return error;
+      else
+	error=1;
+      break;
+
+    case VDIS:
+      if ((value >= 0) && (value <= Vmax))
+	{
+	  tmp = (value * 4095 * 3) /(Vdd * 28);
+	  Vdis = (int) tmp;
+	}
+      else
+	error=1;
+      break;
+
+    case VHYST:
+      if ((value >= 0) && (value <= Vmax))
+	{
+	  tmp = (value * 4095 * 3) /(Vdd * 28);
+	  Vhyst = (int) tmp;
+	}
+      else
+	error=1;
+      break;
+
+    case IMAX:
+      if ((value >= 0) && (value <= 6))
+	{
+	  tmp = (value * 4095 * 0.151) / (Vdd * 2);
+	  Imax = (int) tmp;
+	}
+      else
+	error=1;
+      break;
+
+    case VMAX:
+      if ((value >= 0) && (value <= 30))
+	{
+	  tmp = (value * 4095 * DIVIDEND) / (Vdd * DIVIDER);
+	  Vmax = (int) tmp;
+	}
+      else
+	error=1;
+      break;
+
+    case PRIO_REF:
+      if ((value >= 5) && (value <= 25))
+	{
+	  //				Prio = (int) value;
+	  Prio = (int)(value * 4095 * DIVIDEND) /(Vdd * DIVIDER);
+	}
+      else
+	error=1;
+      break;
+    }
+  return error;
 }
 
 float get_ctrl_params(ctrl_params_t var)
 {
-	float result=0;
-	switch (var)
-	{
-		case VREF:
-			result = (Vref * Vdd * DIVIDER) / (4095 * DIVIDEND);
-			break;
-		case IMAX:
-			result = (Imax * Vdd * 2) / (4095 * 0.151);
-			break;
-		case VMAX:
-			result = (Vmax * Vdd * DIVIDER) / (4095 * DIVIDEND);
-			break;
-		case PRIO_REF:
-			result = (int)(Prio * Vdd * DIVIDER) / (4095 * DIVIDEND);
-			break;
-		case VDIS:
-			result = (Vdis * Vdd * 28) / (4095 * 3);
-			break;
-		case VHYST:
-			result = (Vhyst * Vdd * 28) / (4095 * 3);
-			break;
-	}
-	return result;
+  float result=0;
+  switch (var)
+    {
 
+    case VREF:
+      result = (Vref * Vdd * DIVIDER) / (4095 * DIVIDEND);
+      break;
+
+    case IMAX:
+      result = (Imax * Vdd * 2) / (4095 * 0.151);
+      break;
+
+    case VMAX:
+      result = (Vmax * Vdd * DIVIDER) / (4095 * DIVIDEND);
+      break;
+
+    case PRIO_REF:
+      result = (int)(Prio * Vdd * DIVIDER) / (4095 * DIVIDEND);
+      break;
+
+    case VDIS:
+      result = (Vdis * Vdd * 28) / (4095 * 3);
+      break;
+
+    case VHYST:
+      result = (Vhyst * Vdd * 28) / (4095 * 3);
+      break;
+    }
+  return result;
 }
 
 float get_svector(svector_t var)
 {
-	float result=0;
-	switch (var)
-	{
-		case VOUT:
-			result = (Vo * Vdd * DIVIDER) / (4095 * DIVIDEND);
-			break;
-		case VIN:
-			result = (Vi * Vdd * DIVIDER) / (4095 * DIVIDEND);
-			break;
-		case IOUT:
-			result = (Io * Vdd * 2) / (4095 * 0.151);
-			break;
-		case IIN:
-			result = (Ii * Vdd * 2) / (4095 * 0.151);
-			break;
-		case PRIO:
-			result = (int)((Prio * Vdd * DIVIDER) / (4095 * DIVIDEND));
-			break;
-	}
-	return result;
+  float result=0;
+  switch (var)
+    {
+    case VOUT:
+      result = (Vo * Vdd * DIVIDER) / (4095 * DIVIDEND);
+      break;
+
+    case VIN:
+      result = (Vi * Vdd * DIVIDER) / (4095 * DIVIDEND);
+      break;
+
+    case IOUT:
+      result = (Io * Vdd * 2) / (4095 * 0.151);
+      break;
+
+    case IIN:
+      result = (Ii * Vdd * 2) / (4095 * 0.151);
+      break;
+
+    case PRIO:
+      result = (int)((Prio * Vdd * DIVIDER) / (4095 * DIVIDEND));
+      break;
+    }
+  return result;
 
 }
 
 void ValueInit(void)
 {
-	Vref = 0;
-	Vdis = 0;
-	Imax = (int)(I_IMAX * 4095 * 0.151) /(Vdd * 2);
-	Vmax = (int)(I_VMAX * 4095 * DIVIDEND) /(Vdd * DIVIDER);
-	Vo = 0;
-	Vi = 0;
-	Io = 0;
-	Ii = 0;
-	i = 1;
-	Vom = 0;
-	Vim = 0;
-	Iom = 0;
-	Iim = 0;
-	user_allowed = 0;
-	uart_buf_init(&uart_buf);
+  Vref = 0;
+  Vdis = 0;
+  Imax = (int)(I_IMAX * 4095 * 0.151) /(Vdd * 2);
+  Vmax = (int)(I_VMAX * 4095 * DIVIDEND) /(Vdd * DIVIDER);
+  Vo = 0;
+  Vi = 0;
+  Io = 0;
+  Ii = 0;
+  i = 1;
+  Vom = 0;
+  Vim = 0;
+  Iom = 0;
+  Iim = 0;
+  user_allowed = 0;
+  uart_buf_init(&uart_buf);
 }
-
-#define MEAN_SAMPLES 5000
 
 void MeanValues(void)
 {
-	float aux;
+  float aux;
 
-	i++;
-	Vom += Vout;
-	Vim += Vin;
-	if((LPC_GPIO2->FIOPIN & 0x0008) || (CurrentState == BOOST_SOFT))
-		Iom += Il;
-	if(LPC_GPIO2->FIOPIN & 0x0002)
-		Iim += Il;
+  i++;
+  Vom += Vout;
+  Vim += Vin;
+  if((LPC_GPIO2->FIOPIN & 0x0008) || (CurrentState == BOOST_SOFT))
+    Iom += Il;
+  if(LPC_GPIO2->FIOPIN & 0x0002)
+    Iim += Il;
 
-	if((i % MEAN_SAMPLES) == 0)
-	{
-		Vo = Vom / MEAN_SAMPLES;
-		Vi = Vim / MEAN_SAMPLES;
-		Io = Iom / MEAN_SAMPLES;
-		Ii = Iim / MEAN_SAMPLES;
-		Vom = 0;
-		Vim = 0;
-		Iom = 0;
-		Iim = 0;
-	}
-#ifdef ShowPeriodically
-	if(i >= MEAN_SAMPLES)
-	{
-		i = 1;
-		print("\r\n Vo:");
-		aux = (Vo * Vdd * DIVIDER) / (4095 * DIVIDEND);
-		print_float(&aux);
-		print(" Vin:");
-		aux = (Vi * Vdd * DIVIDER) / (4095 * DIVIDEND);
-		print_float(&aux);
-		print(" Io:");
-		aux = (Io * Vdd * 2) / (4095 * 0.151);
-		print_float(&aux);
-		print(" Ii:");
-		aux = (Ii * Vdd * 2) / (4095 * 0.151);
-		print_float(&aux);
-	}
-#endif
+  if((i % MEAN_SAMPLES) == 0)
+    {
+      Vo = Vom / MEAN_SAMPLES;
+      Vi = Vim / MEAN_SAMPLES;
+      Io = Iom / MEAN_SAMPLES;
+      Ii = Iim / MEAN_SAMPLES;
+      Vom = 0;
+      Vim = 0;
+      Iom = 0;
+      Iim = 0;
+    }
 }
 
 void BangBang(void)
@@ -353,5 +344,3 @@ void BangBang(void)
 	else
 		SetState(ALL_OFF);
 }
-
-
