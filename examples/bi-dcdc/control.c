@@ -36,15 +36,16 @@
  *
  */
 
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
 #include "contiki.h"
 #include "lpc17xx.h"
 #include "bang.h"
 #include "control.h"
 #include "adc.h"
 #include "bang-config.h"
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
+#include "vsc.h"
 
 #define MEAN_SAMPLES 5000
 

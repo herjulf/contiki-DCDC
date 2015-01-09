@@ -5,7 +5,6 @@
 #include "contiki-net.h"
 //#include "leds.h"
 
-
 /* Define which resources to include to meet memory constraints. */
 #define REST_RES_HELLO 0
 #define REST_RES_CHUNKS 0
@@ -24,14 +23,13 @@
 #define REST_RES_CTRLPARAM 1
 #define PLATFORM_HAS_ADC 1
 
-
-
 #include "erbium.h"
 
 #if defined (PLATFORM_HAS_ADC)
 #include "adc.h"
 #include "bang.h"
 #include "control.h"
+#include "vsc.h"
 #endif
 
 #if defined (PLATFORM_HAS_BUTTON)
@@ -904,14 +902,6 @@ PROCESS_THREAD(rest_server_example, ev, data)
    PROCESS_END();
 }
 
-
-#include "contiki.h"
-#include "bang.h"
-#include "control.h"
-#include "adc.h"
-#include "contiki-net.h"
-#include <stdio.h>
-
 void do_report(void)
 {
   printf("&: TXT=DCDC STATE=%s", get_converter_state());
@@ -931,8 +921,12 @@ void do_report(void)
   float v_dis =  get_ctrl_params(VDIS);
   float v_hyst =  get_ctrl_params(VHYST);
 
-  printf(" V_REF=%-5.2f V_MAX=%-5.2f I_MAX=%-5.2f V_DIS=%-5.2f V_HYST=%-5.2f\n", 
+  if(0) 
+    printf(" V_REF=%-5.2f V_MAX=%-5.2f I_MAX=%-5.2f V_DIS=%-5.2f V_HYST=%-5.2f\n", 
 	 v_ref, v_max, i_max, v_dis, v_hyst);
+
+    printf(" V_VSC=%-5.2f V_MAX=%-5.2f I_MAX=%-5.2f\n", 
+	 v_ref, v_max, i_max);
 }
 
 void start_bangbang(void) {
@@ -983,16 +977,16 @@ PROCESS_THREAD(init_process, ev, data)
 {
 	PROCESS_BEGIN();
  
-	if (set_ctrl_params(VREF, 6.0))
+	if (set_ctrl_params(VREF, VSC_MAX))
                 printf("Value out of range: must be 0 <= Vref <= Vmax");
 
-	if (set_ctrl_params(VDIS, 12.0))
+	if (set_ctrl_params(VDIS, V_DIS))
                 printf("Error setting VDIS");
 
-	if (set_ctrl_params(VHYST, 2.0))
+	if (set_ctrl_params(VHYST, V_HYST))
                 printf("Error setting HYST");
 
-	if (set_ctrl_params(IMAX, 2.0))
+	if (set_ctrl_params(IMAX, I_MAX))
                 printf("Error setting IMAX");
 
 	PROCESS_END();
