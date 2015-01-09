@@ -28,13 +28,13 @@
 #define MTDC_MAX 1     /* Max MTDC terminals */
 
 /* 
-   DCGRID_MAX to DCGRID_MIN defines the operational voltage interval 
+   VSC_MAX to VSC_MIN defines the operational voltage interval 
    for load sharing according to droop control algorithm.
 */
 
-
-#define DCGRID_MAX 6  /* Max Grid Voltage droop */
-#define DCGRID_MIN 3.5  /* Min Grid Voltage droop */
+#define VSC_MAX 10         /* Max Grid Voltage droop */
+#define VSC_INTERVAL 0.85  /* Grid voltage interval */
+#define VSC_MIN VSC_MAX * VSC_INTERVAL  /* Min Grid Voltage droop */
 
 /* Terminal/Converter parameter settings */
 
@@ -53,13 +53,13 @@ struct vsc
 static void vsc_droop_init(struct vsc *v, int id)
 {
   if(id == 0) {
-    v->c1 = DCGRID_MAX;
+    v->c1 = VSC_MAX;
     v->c2 = -0.07;
     v->p_max = 60;
   }
 
   if(id == 1) {
-    v->c1 = DCGRID_MAX;
+    v->c1 = VSC_MAX;
     v->c2 = -0.03;
     v->p_max = 100;
   }
@@ -123,7 +123,7 @@ int main()
   for(p1=0; p1 < MTDC_MAX; p1++)
     vsc_droop_init(&t[p1], p1);
 
-  for(p1=0; p1 < DCGRID_MAX; p1++) {
+  for(p1=0; p1 < VSC_MAX; p1++) {
 
     printf("i=%-5.2f ", i);
     for(p2=0; p2 < MTDC_MAX; p2++) {
