@@ -46,6 +46,4 @@
 #define DIVIDEND	3	//old
 #endif
 
-#define VREF_DEFAULT	10
-
 #endif /* BANG_CONFIG_H_ */
