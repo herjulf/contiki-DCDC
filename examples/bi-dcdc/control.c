@@ -245,6 +245,8 @@ void ValueInit(void)
 	uart_buf_init(&uart_buf);
 }
 
+#define MEAN_SAMPLES 5000
+
 void MeanValues(void)
 {
 	float aux;
@@ -257,19 +259,19 @@ void MeanValues(void)
 	if(LPC_GPIO2->FIOPIN & 0x0002)
 		Iim += Il;
 
-	if((i % 100000) == 0)
+	if((i % MEAN_SAMPLES) == 0)
 	{
-		Vo = Vom / 100000;
-		Vi = Vim / 100000;
-		Io = Iom / 100000;
-		Ii = Iim / 100000;
+		Vo = Vom / MEAN_SAMPLES;
+		Vi = Vim / MEAN_SAMPLES;
+		Io = Iom / MEAN_SAMPLES;
+		Ii = Iim / MEAN_SAMPLES;
 		Vom = 0;
 		Vim = 0;
 		Iom = 0;
 		Iim = 0;
 	}
 #ifdef ShowPeriodically
-	if(i >= 100000)
+	if(i >= MEAN_SAMPLES)
 	{
 		i = 1;
 		print("\r\n Vo:");
