@@ -24,17 +24,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "control.h"
-
-#define MTDC_MAX 1     /* Max MTDC terminals */
-
-/* 
-   VSC_MAX to VSC_MIN defines the operational voltage interval 
-   for load sharing according to droop control algorithm.
-*/
-
-#define VSC_MAX 10         /* Max Grid Voltage droop */
-#define VSC_INTERVAL 0.85  /* Grid voltage interval */
-#define VSC_MIN VSC_MAX * VSC_INTERVAL  /* Min Grid Voltage droop */
+#include "vsc.h"
 
 /* Terminal/Converter parameter settings */
 
@@ -49,6 +39,8 @@ struct vsc
   double i;        /* Terminal Current */
   double i_min;
 };
+
+struct vsc t[MTDC_MAX];
 
 static void vsc_droop_init(struct vsc *v, int id)
 {
@@ -68,9 +60,6 @@ static void vsc_droop_init(struct vsc *v, int id)
   v->u_max = v->c1;
   v->u = v->u_max;
 }
-
-struct vsc t[MTDC_MAX];
-
 
 static void vsc_droop(struct vsc *v, double i)
 {
