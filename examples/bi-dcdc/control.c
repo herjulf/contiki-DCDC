@@ -126,7 +126,7 @@ int set_ctrl_params(ctrl_params_t var, float value)
     case VDIS:
       if ((value >= 0) && (value <= Vmax))
 	{
-	  tmp = (value * 4095 * 3) /(Vdd * 28);
+	  tmp = (value * 4095 * DIVIDEND) /(Vdd * DIVIDER);
 	  Vdis = (int) tmp;
 	}
       else
@@ -136,7 +136,7 @@ int set_ctrl_params(ctrl_params_t var, float value)
     case VHYST:
       if ((value >= 0) && (value <= Vmax))
 	{
-	  tmp = (value * 4095 * 3) /(Vdd * 28);
+	  tmp = (value * 4095 * DIVIDEND) /(Vdd * DIVIDER);
 	  Vhyst = (int) tmp;
 	}
       else
@@ -199,11 +199,11 @@ float get_ctrl_params(ctrl_params_t var)
       break;
 
     case VDIS:
-      result = (Vdis * Vdd * 28) / (4095 * 3);
+      result = (Vdis * Vdd * DIVIDER) / (4095 * DIVIDEND);
       break;
 
     case VHYST:
-      result = (Vhyst * Vdd * 28) / (4095 * 3);
+      result = (Vhyst * Vdd * DIVIDER) / (4095 * DIVIDEND);
       break;
     }
   return result;
