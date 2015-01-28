@@ -52,6 +52,9 @@ unsigned int idle_count = 0;
 int
 main()
 {
+  unsigned char lladdr[8];
+  int i;
+
   debug_uart_setup();
   printf("Initializing clocks\n");
   clock_init();
@@ -69,20 +72,17 @@ main()
   printf("Starting EMAC service\n");
   process_start(&emac_lpc1768, NULL);
 
+  printf("Initializing i2c and EUI64/EEPROM\n");
+  eeprom_init();
+  eeprom_read(0xF8, &lladdr, 8); /* See EEPROM datasheet for addr */
+
 #if UIP_CONF_IPV6
-  // init MAC address
-  uip_lladdr.addr[0] = EMAC_ADDR0;
-  uip_lladdr.addr[1] = EMAC_ADDR1;
-  uip_lladdr.addr[2] = EMAC_ADDR2;
-  uip_lladdr.addr[3] = EMAC_ADDR3;
-  uip_lladdr.addr[4] = EMAC_ADDR4;
-  uip_lladdr.addr[5] = EMAC_ADDR5;
+  //uip_ds6_addr_t *lladdr;
+  //lladdr = uip_ds6_get_link_local(-1);
 
-  uip_ds6_addr_t *lladdr;
-  lladdr = uip_ds6_get_link_local(-1);
-
-  printf("Tentative link-local IPv6 address:");
-  uip_debug_ipaddr_print(&(lladdr->ipaddr));
+  printf("EEPROM link-local IPv6 address: ");
+  for(i=0; i<8; i++)
+    printf("%02X", lladdr[i]);
   printf("\n");
 
   // Configure global IPv6 address
@@ -98,7 +98,6 @@ main()
   //uip_ds6_prefix_add(&ipaddr, 64, 0);
 
 #else
-  uip_ipaddr_t addr;
   // init MAC address
   uip_ethaddr.addr[0] = EMAC_ADDR0;
   uip_ethaddr.addr[1] = EMAC_ADDR1;

@@ -6,7 +6,8 @@
 
 #define I2CDEV_S_ADDR	(0xA0 >> 1)
 
-void eeprom_init() {
+void eeprom_init() 
+{
 	PINSEL_CFG_Type PinCfg;
 
 	/*
@@ -28,7 +29,8 @@ void eeprom_init() {
 	I2C_Cmd(LPC_I2C0, I2C_MASTER_MODE, 1);
 }
 
-void eeprom_write(eeprom_addr_t addr, unsigned char *buf, int size) {
+void eeprom_write(eeprom_addr_t addr, unsigned char *buf, int size) 
+{
 	I2C_M_SETUP_Type transferMCfg;
 	uint8_t eeprom_addr;
 	eeprom_addr = (uint8_t) addr;
@@ -52,11 +54,12 @@ void eeprom_write(eeprom_addr_t addr, unsigned char *buf, int size) {
 	I2C_MasterTransferData(LPC_I2C0, &transferMCfg, I2C_TRANSFER_POLLING);
 }
 
-void eeprom_read(eeprom_addr_t addr, unsigned char *buf, int size){
+void eeprom_read(eeprom_addr_t addr, unsigned char *buf, int size)
+{
 	I2C_M_SETUP_Type transferMCfg;
 	uint8_t eeprom_addr;
 	eeprom_addr = (uint8_t) addr;
-	printf("b4 write eeprom read addr\n");
+	//printf("b4 write eeprom read addr\n");
 	transferMCfg.sl_addr7bit = I2CDEV_S_ADDR;
 	transferMCfg.tx_data = &eeprom_addr;
 	transferMCfg.tx_length = 1;
@@ -65,7 +68,7 @@ void eeprom_read(eeprom_addr_t addr, unsigned char *buf, int size){
 	transferMCfg.retransmissions_max = 3;
 	//LPC_GPIO1->FIOPIN ^= (1 << 27);
 	I2C_MasterTransferData(LPC_I2C0, &transferMCfg, I2C_TRANSFER_POLLING);
-	printf("after write eeprom addr\n");
+	//printf("after write eeprom addr\n");
 	transferMCfg.sl_addr7bit = I2CDEV_S_ADDR;
 	transferMCfg.tx_data = NULL;
 	transferMCfg.tx_length = 0;
@@ -74,5 +77,5 @@ void eeprom_read(eeprom_addr_t addr, unsigned char *buf, int size){
 	transferMCfg.retransmissions_max = 3;
 	//LPC_GPIO1->FIOPIN ^= (1 << 27);
 	I2C_MasterTransferData(LPC_I2C0, &transferMCfg, I2C_TRANSFER_POLLING);
-	printf("after read\n");
+	//printf("after read\n");
 }
