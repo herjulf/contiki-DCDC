@@ -51,9 +51,8 @@
 
 int Vref, Imax, Vmax, Vdis, Vhyst;
 int Vout, Vin, Il;
-int Vo, Vi, Io, Ii;
-int i, Vom, Vim, Iom, Iim, Prio, Enable;
-int I0, I1;
+int Vo, Vi, Io, Ii, I0, I1;
+int i, Vom, Vim, Iom, Iim, I0m, I1m, Prio, Enable;
 int Iref;
 int user_allowed;
 
@@ -223,11 +222,11 @@ float get_svector(svector_t var)
       break;
 
     case IOUT:
-      result = (Io * Vdd * 2) / (4095 * 0.151);
+      result = (I0 * Vdd * 2) / (4095 * 0.151);
       break;
 
     case IIN:
-      result = (Ii * Vdd * 2) / (4095 * 0.151);
+      result = (I1 * Vdd * 2) / (4095 * 0.151);
       break;
 
     case PRIO:
@@ -244,6 +243,8 @@ void ValueInit(void)
   Vdis = 0;
   Imax = (int)(I_IMAX * 4095 * 0.151) /(Vdd * 2);
   Vmax = (int)(I_VMAX * 4095 * DIVIDEND) /(Vdd * DIVIDER);
+  I0 = 0;
+  I1 = 0;
   Vo = 0;
   Vi = 0;
   Io = 0;
@@ -269,16 +270,23 @@ void MeanValues(void)
   if(LPC_GPIO2->FIOPIN & 0x0002)
     Iim += Il;
 
+  I0m += I0;
+  I1m += I1;
+
   if((i % MEAN_SAMPLES) == 0)
     {
       Vo = Vom / MEAN_SAMPLES;
       Vi = Vim / MEAN_SAMPLES;
       Io = Iom / MEAN_SAMPLES;
       Ii = Iim / MEAN_SAMPLES;
+      I0 = I0m / MEAN_SAMPLES;
+      I1 = I1m / MEAN_SAMPLES;
       Vom = 0;
       Vim = 0;
       Iom = 0;
       Iim = 0;
+      I0m = 0;
+      I1m = 0;
     }
 }
 

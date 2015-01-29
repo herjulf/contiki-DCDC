@@ -46,14 +46,16 @@ void ADCInit_work(void)
 
 void ADCInit(void)
 {
-	LPC_PINCON->PINSEL1 |= 0x00154000;		// Select ADC function for pins (ADC0-3)
+	LPC_PINCON->PINSEL1  |= 0x00154000;		// Select ADC function for pins (ADC0-3)
 	LPC_PINCON->PINMODE1 |= 0x0002A8000;	// Neither pull-up nor pull-down resistor
-	LPC_PINCON->PINSEL3 |= 0xF0000000;		// Select ADC function for pins (ADC4-5)
+	LPC_PINCON->PINSEL3  |= 0xF0000000;		// Select ADC function for pins (ADC4-5)
 	LPC_PINCON->PINMODE3 |= 0xA00000000;	// Neither pull-up nor pull-down resistor
 
-	LPC_PINCON->PINSEL0 &= ~(0x0000000F0);
-	LPC_PINCON->PINSEL0 |= 0x000000A0;		// Select ADC function for pins (ADC6-7)
-	LPC_PINCON->PINMODE0 |= 0x000000A0;		// Neither pull-up nor pull-down resistor
+	LPC_PINCON->PINSEL0  &= ~(0x0000000F0);
+	LPC_PINCON->PINSEL0  |=    0x000000A0;		// Select ADC function for pins (ADC6-7)
+	//LPC_PINCON->PINMODE0 |= 0b 1010 0000 0000 0000;    // Neither pull-up nor pull-down resistor
+	LPC_PINCON->PINMODE0 &=  ~(0xF000);    // Neither pull-up nor pull-down resistor
+	LPC_PINCON->PINMODE0 |= 0xA000;        // Neither pull-up nor pull-down resistor
 
 	LPC_SC->PCONP |= (1 << 12);				// Set up bit PCADC
 	LPC_SC->PCLKSEL0 |= (01 << 24);			// PCLK = CCLK (102 MHz)
@@ -102,17 +104,17 @@ LPC_GPIO1->FIOPIN ^= (1 << 29); //old =29
 		Vin = ADCValues(1);
 		Iref = ADCValues(2);
 		Il = ADCValues(3) - Iref;
-		I0 = ADCValues(4);
-		I1 = ADCValues(5);
+		I0 = ADCValues(5) - ADCValues(4);
+		I1 = ADCValues(7) - ADCValues(6);
 		MeanValues();
 
   float i_in =  get_svector(IIN);
   float i_out =  get_svector(IOUT);
 
-		if(1)
-		  VSC_Calc(i_out);
-		else 
-		  VSC_Calc(i_out);
+  		if(1)
+  		  VSC_Calc(i_out);
+  		else 
+  		  VSC_Calc(i_out);
 		BangBang();
 
 #ifdef BOARD_2013
