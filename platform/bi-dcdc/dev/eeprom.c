@@ -79,3 +79,27 @@ void eeprom_read(eeprom_addr_t addr, unsigned char *buf, int size)
 	I2C_MasterTransferData(LPC_I2C0, &transferMCfg, I2C_TRANSFER_POLLING);
 	//printf("after read\n");
 }
+
+void eeprom_dump(void)
+{
+  unsigned short i;
+  unsigned char buf[1];
+
+  for(i=0; i <= 0xFF; i++) {
+    eeprom_read(i, &buf, 1); 
+    if(!(i%16))   
+      printf("\n");
+    printf("%02X", buf[0]);
+  }
+  printf("\n");
+}
+
+void eeprom_erase(void)
+{
+  unsigned short i;
+  unsigned char buf[1];
+
+  buf[0] = 0xFF;
+  for(i=0; i <= 0xFF; i++) 
+    eeprom_write(i, &buf, 1); 
+}
