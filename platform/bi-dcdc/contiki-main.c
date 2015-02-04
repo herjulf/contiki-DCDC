@@ -80,10 +80,18 @@ main()
   //uip_ds6_addr_t *lladdr;
   //lladdr = uip_ds6_get_link_local(-1);
 
-  printf("EEPROM link-local IPv6 address: ");
+  printf("EEPROM EUI64 address: ");
   for(i=0; i<8; i++)
     printf("%02X", lladdr[i]);
   printf("\n");
+
+  // set MAC address according to EEPROM EUI64 address
+  uip_lladdr.addr[0] = lladdr[0];
+  uip_lladdr.addr[1] = lladdr[1];
+  uip_lladdr.addr[2] = lladdr[2];
+  uip_lladdr.addr[3] = lladdr[5];
+  uip_lladdr.addr[4] = lladdr[6];
+  uip_lladdr.addr[5] = lladdr[7];
 
   // Configure global IPv6 address
   //uip_ipaddr_t ipaddr;
