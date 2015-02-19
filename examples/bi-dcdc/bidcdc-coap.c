@@ -736,9 +736,9 @@ void
 svector_handler(void* request, void* response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset)
 {
   float vout_value= get_svector(VOUT);
-  float iout_value= get_svector(IOUT);
+  float iout_value= get_svector(IO);
   float vin_value= get_svector(VIN);
-  float iin_value= get_svector(IIN);
+  float iin_value= get_svector(II);
   int prio_value=get_svector(PRIO);
   char * converter_state_string= get_converter_state();
 
@@ -908,8 +908,8 @@ void do_report(void)
   
   float v_in =  get_svector(VIN);
   float v_out =  get_svector(VOUT);
-  float i_in =  get_svector(IIN);
-  float i_out =  get_svector(IOUT);
+  float i_in =  get_svector(II);
+  float i_out =  get_svector(IO);
   float prio;
   
   printf(" V_IN=%-5.2f V_OUT=%-5.2f I_IN=%-5.2f I_OUT=%-5.2f PRIO=%-3d", 
@@ -986,8 +986,8 @@ PROCESS_THREAD(init_process, ev, data)
 	if (set_ctrl_params(VHYST, V_HYST))
                 printf("Error setting HYST");
 
-	if (set_ctrl_params(IMAX, I_MAX))
-                printf("Error setting IMAX");
+	if (set_ctrl_params(IMAX, I_IMAX))
+	  printf("Error setting IMAX");
 
 	PROCESS_END();
 }

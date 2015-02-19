@@ -43,7 +43,7 @@
 PROCESS_NAME(bang_control_process);
 
 #define Vdd 3.293
-#define I_IMAX	1
+#define I_IMAX	3
 #define I_VMAX	25
 #define UART_BUFFER_SIZE 1024
 
@@ -76,8 +76,8 @@ typedef enum
 {
         VOUT = 0,
         VIN,
-        IOUT,
-        IIN,
+        II,
+        IO,
         PRIO,
 }svector_t;
 

@@ -10,5 +10,5 @@
 #define VSC_MIN VSC_MAX * VSC_INTERVAL  /* Min Grid Voltage droop */
 
 #define V_DIS   VSC_MAX * 0.7 /* Disconnent voltage */
-#define V_HYST  VSC_MAX/10   /* Reconnect voltage */
-#define I_MAX   2         
+#define V_HYST  VSC_MAX*0.1   /* Reconnect voltage */
+
