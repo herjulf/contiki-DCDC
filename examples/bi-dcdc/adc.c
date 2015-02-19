@@ -9,12 +9,12 @@
 #include "adc.h"
 #include "control.h"
 
-int ADC[ADCChannels];
+int ADC[MAX_ADC];
 int UpdateChannel;
 
-int pos[ADCChannels];
-int glitches[ADCChannels];
-int Buffer[2][GlitchBuffer][ADCChannels];
+int pos[MAX_ADC];
+int glitches[MAX_ADC];
+int Buffer[2][GlitchBuffer][MAX_ADC];
 
 extern int Vout, Vin, Iref, Il;
 extern int I0, I1;
@@ -63,7 +63,7 @@ void ADC_IRQHandler(void)
 	Channel = (LPC_ADC->ADGDR >> 24) & 0x00000007;
 	ADC[Channel] = (LPC_ADC->ADGDR >> 4) & 0x00000FFF;
 	Channel++;
-	if(Channel < ADCChannels)
+	if(Channel < MAX_ADC)
 		ADCRead(Channel);
 	else
 	{
@@ -84,8 +84,8 @@ LPC_GPIO1->FIOPIN ^= (1 << 29); //old =29
 		I1 = ADCValues(7) - ADCValues(6);
 		MeanValues();
 
-  float i_in =  get_svector(IIN);
-  float i_out =  get_svector(IOUT);
+float i_in =  get_svector(IIN);
+float i_out =  get_svector(IOUT);
 
   		if(1)
   		  VSC_Calc(i_out);
@@ -109,13 +109,13 @@ void ADCvaluesInit(void)
 	{
 		for(j=0; j<GlitchBuffer; j++)
 		{
-			for(k=0; k<ADCChannels; k++)
+			for(k=0; k<MAX_ADC; k++)
 			{
 				Buffer[i][j][k]=0;
 			}
 		}
 	}
-	for(i=0; i<ADCChannels; i++)
+	for(i=0; i<MAX_ADC; i++)
 	{
 		pos[i] = 0;
 		glitches[i] = 0;
