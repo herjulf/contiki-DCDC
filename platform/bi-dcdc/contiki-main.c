@@ -49,6 +49,11 @@
 
 unsigned int idle_count = 0;
 
+float v_in_corr = 1.0;
+float v_out_corr = 1.0;
+float io_corr = 1.0;
+
+
 int
 main()
 {
@@ -127,6 +132,13 @@ main()
   printf("Def. Router: %d.%d.%d.%d\n", uip_ipaddr_to_quad(&addr));
   uip_setdraddr(&addr);
 #endif
+
+  if (lladdr[7] == 0x42 ) {
+      printf("Setting ADC corrections\n");
+      v_in_corr = 0.9761;
+      v_out_corr = 0.96705;
+      io_corr = 1.0;
+  }
 
   printf("Starting TCP/IP service\n");
   process_start(&tcpip_process, NULL);          // invokes uip_init();

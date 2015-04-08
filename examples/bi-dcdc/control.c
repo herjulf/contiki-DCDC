@@ -60,6 +60,12 @@ extern int ADC[4];
 extern state_t CurrentState;
 extern int UpdateChannel;
 
+
+extern float v_in_corr;
+extern float v_out_corr;
+extern float io_corr;
+
+
 /* received and transmitted data buffers */
 static uart_buffer_type uart_buf;
 uint8_t welcome_msg[] = "\r";
@@ -215,20 +221,23 @@ float get_svector(svector_t var)
     {
     case VOUT:
       result = (Vo * Vdd * DIVIDER) / (4095 * DIVIDEND);
+      result *= v_out_corr;
       break;
 
     case VIN:
       result = (Vi * Vdd * DIVIDER) / (4095 * DIVIDEND);
+      result *= v_in_corr;
       break;
 
     case IO:
       result = (Io * Vdd * DIVIDER) / (4095 * DIVIDEND);
-      result = result * 1.5; /* Calibration 48E7 */
+      result *= io_corr;
+      result = result;
       break;
 
     case II:
       result = (Ii * Vdd * DIVIDER) / (4095 * DIVIDEND);
-      result = result * 2; /* Calibration 48E7  */
+      result = result * 1; /* Calibration 48E7  */
       break;
 
     case PRIO:

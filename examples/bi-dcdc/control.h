@@ -43,7 +43,7 @@
 PROCESS_NAME(bang_control_process);
 
 #define Vdd 3.293
-#define I_IMAX	3
+#define I_IMAX	4
 #define I_VMAX	25
 #define UART_BUFFER_SIZE 1024
 

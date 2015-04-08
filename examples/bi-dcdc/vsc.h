@@ -5,7 +5,7 @@
    for load sharing according to droop control algorithm.
 */
 
-#define VSC_MAX 12         /* Max Grid Voltage droop */
+#define VSC_MAX 7          /* Max Grid Voltage droop */
 #define VSC_INTERVAL 0.87  /* Grid voltage interval */
 #define VSC_MIN VSC_MAX * VSC_INTERVAL  /* Min Grid Voltage droop */
 
