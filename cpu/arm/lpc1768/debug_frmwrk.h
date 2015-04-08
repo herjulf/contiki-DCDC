@@ -28,7 +28,7 @@
 /* #include <stdarg.h> */
 #include "lpc17xx_uart.h"
 
-#define USED_UART_DEBUG_PORT  1
+#define USED_UART_DEBUG_PORT  0
 
 #if (USED_UART_DEBUG_PORT == 0)
 #define DEBUG_UART_PORT LPC_UART0
