@@ -63,7 +63,8 @@ extern int UpdateChannel;
 
 extern float v_in_corr;
 extern float v_out_corr;
-extern float io_corr;
+extern float io_corr_l;
+extern float io_corr_k;
 
 
 /* received and transmitted data buffers */
@@ -231,7 +232,13 @@ float get_svector(svector_t var)
 
     case IO:
       result = (Io * Vdd * DIVIDER) / (4095 * DIVIDEND);
-      result *= io_corr;
+      result -= io_corr_l;
+
+      if(result > 0)
+	result = result / io_corr_k;
+      else 
+	result = 0;
+
       break;
 
     case II:

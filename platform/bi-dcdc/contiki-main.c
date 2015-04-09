@@ -51,7 +51,8 @@ unsigned int idle_count = 0;
 
 float v_in_corr = 1.0;
 float v_out_corr = 1.0;
-float io_corr = 1.0;
+float io_corr_k = 1.0;
+float io_corr_l = 1.0;
 
 
 int
@@ -137,13 +138,15 @@ main()
       printf("Setting ADC corrections\n");
       v_in_corr = 0.9761;
       v_out_corr = 0.96705;
-      io_corr = 1.0;
+      io_corr_k = 1;
+      io_corr_l = 0;
   }
   if (lladdr[7] == 0xe7  && lladdr[6] == 0x48 ) {
     printf("Setting ADC corrections\n");
     v_in_corr = 0.9793;
     v_out_corr = 0.9659;
-    io_corr = 1.0;
+    io_corr_k = 0.569209;
+    io_corr_l = 0.145487;
   }
 
   printf("Starting TCP/IP service\n");
