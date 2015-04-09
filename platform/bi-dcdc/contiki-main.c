@@ -133,11 +133,17 @@ main()
   uip_setdraddr(&addr);
 #endif
 
-  if (lladdr[7] == 0x42 ) {
+  if (lladdr[7] == 0x42  && lladdr[6] == 0x5c ) {
       printf("Setting ADC corrections\n");
       v_in_corr = 0.9761;
       v_out_corr = 0.96705;
       io_corr = 1.0;
+  }
+  if (lladdr[7] == 0xe7  && lladdr[6] == 0x48 ) {
+    printf("Setting ADC corrections\n");
+    v_in_corr = 0.9793;
+    v_out_corr = 0.9659;
+    io_corr = 1.0;
   }
 
   printf("Starting TCP/IP service\n");
