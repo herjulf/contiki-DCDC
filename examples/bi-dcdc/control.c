@@ -232,7 +232,6 @@ float get_svector(svector_t var)
     case IO:
       result = (Io * Vdd * DIVIDER) / (4095 * DIVIDEND);
       result *= io_corr;
-      result = result;
       break;
 
     case II:
