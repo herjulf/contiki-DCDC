@@ -54,9 +54,15 @@ float v_out_corr = 1.0;
 float io_corr_k = 1.0;
 float io_corr_l = 1.0;
 
+void start_bangbang(void) {
+	GPIOInit();
+	TimerInit();
+	ValueInit();
+	VSC_Init();
+	ADCInit();
+}
 
-int
-main()
+int main()
 {
   unsigned char lladdr[8];
   int i;
@@ -72,6 +78,9 @@ main()
   printf("Initializing leds\n");
   leds_arch_init();
   #endif
+
+  printf("Starting bangbang\n");
+  start_bangbang();
 
   printf("Starting etimers\n");
   process_start(&etimer_process, NULL);

@@ -929,27 +929,6 @@ void do_report(void)
 	 v_ref, v_max, i_max);
 }
 
-void start_bangbang(void) {
-	GPIOInit();
-	TimerInit();
-	ValueInit();
-	VSC_Init();
-	ADCInit();
-}
-
-PROCESS(bangbang_process, "bangbang control process");
-
-PROCESS_THREAD(bangbang_process, ev, data)
-{
-	PROCESS_BEGIN();
-
-	start_bangbang();
-	PRINTF("Bangbang function started!\n");
-	printf("Bangbang function started!\n");
-
-	PROCESS_END();
-}
-
 PROCESS(report_process, "report process");
 
 PROCESS_THREAD(report_process, ev, data)
@@ -992,5 +971,5 @@ PROCESS_THREAD(init_process, ev, data)
 	PROCESS_END();
 }
 
-AUTOSTART_PROCESSES(&bangbang_process,&rest_server_example,&report_process,&init_process);
+AUTOSTART_PROCESSES(&rest_server_example,&report_process,&init_process);
 
