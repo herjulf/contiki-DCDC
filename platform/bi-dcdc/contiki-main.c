@@ -138,15 +138,15 @@ main()
       printf("Setting ADC corrections\n");
       v_in_corr = 0.9761;
       v_out_corr = 0.96705;
-      io_corr_k = 1;
-      io_corr_l = 0;
+      io_corr_k = 1.03138;
+      io_corr_l = 0.245237;
   }
   if (lladdr[7] == 0xe7  && lladdr[6] == 0x48 ) {
     printf("Setting ADC corrections\n");
     v_in_corr = 0.9793;
     v_out_corr = 0.9659;
-    io_corr_k = 0.569209;
-    io_corr_l = 0.145487;
+    io_corr_k = 0.590486;
+    io_corr_l = 0.0529743;
   }
 
   printf("Starting TCP/IP service\n");
