@@ -30,8 +30,8 @@
 
 struct vsc
 {
-  double c1;       /* Linear coeff 1 */
-  double c2;       /* Linear coeff 2*/
+  double vdmax;	   /* Linear coeff 1: u when p=0 */
+  double slope;    /* Linear coeff 2: slope of voltage droop */
   double p;        /* Current Power */
   double p_max;
   double u;        /* Terminal Voltage */
@@ -45,19 +45,19 @@ struct vsc t[MTDC_MAX];
 static void vsc_droop_init(struct vsc *v, int id)
 {
   if(id == 0) {
-    v->c1 = VSC_MAX;
-    v->c2 = -0.07;
-    v->p_max = 60;
+    v->vdmax = VSC_MAX;
+    v->slope = -0.15;
+    v->p_max = 100;
   }
 
   if(id == 1) {
-    v->c1 = VSC_MAX;
-    v->c2 = -0.03;
+    v->vdmax = VSC_MAX;
+    v->slope = -0.15;
     v->p_max = 100;
   }
 
   v->i_min = 0.1;
-  v->u_max = v->c1;
+  v->u_max = v->vdmax;
   v->u = v->u_max;
 }
 
@@ -69,7 +69,7 @@ static void vsc_droop(struct vsc *v, double i)
     return;
   }
 
-  v->u = v->c1 / (1 - i * v->c2);
+  v->u = v->vdmax / (1 - i * v->slope);
   v->p = v->u * i;
 
   if(v->p >= v->p_max) {
