@@ -295,6 +295,7 @@ void MeanValues(void)
       Vim = 0;
       Iom = 0;
       Iim = 0;
+      VSC_Calc((double)get_svector((svector_t)IO));
     }
 }
 
