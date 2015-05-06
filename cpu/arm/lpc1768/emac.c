@@ -50,8 +50,18 @@ BOOL_8 tapdev_init(void) {
 	/* pin configuration */
 	PINSEL_CFG_Type pincfg;
 	/* EMAC address */
-	uint8_t emac_addr[] = { EMAC_ADDR0, EMAC_ADDR1, EMAC_ADDR2, EMAC_ADDR3,
+
+#if UIP_FIXEDETHADDR
+const uint8_t emac_addr[] = { EMAC_ADDR0, EMAC_ADDR1, EMAC_ADDR2, EMAC_ADDR3,
 			EMAC_ADDR4, EMAC_ADDR5 };
+#else
+uint8_t emac_addr[] = { uip_lladdr.addr[0],
+                        uip_lladdr.addr[1],
+                        uip_lladdr.addr[2],
+                        uip_lladdr.addr[3],
+                        uip_lladdr.addr[4],
+                        uip_lladdr.addr[5]};
+#endif
 
 #if AUTO_NEGOTIATION_ENA != 0
 	emac_config.Mode = EMAC_MODE_AUTO;

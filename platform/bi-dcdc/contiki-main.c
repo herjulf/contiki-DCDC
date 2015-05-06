@@ -84,21 +84,19 @@ int main()
 
   printf("Starting etimers\n");
   process_start(&etimer_process, NULL);
-  printf("Starting EMAC service\n");
-  process_start(&emac_lpc1768, NULL);
 
   printf("Initializing i2c and EUI64/EEPROM\n");
   eeprom_init();
   eeprom_read(0xF8, &lladdr, 8); /* See EEPROM datasheet for addr */
 
-#if UIP_CONF_IPV6
-  //uip_ds6_addr_t *lladdr;
-  //lladdr = uip_ds6_get_link_local(-1);
-
   printf("EEPROM EUI64 address: ");
   for(i=0; i<8; i++)
     printf("%02X", lladdr[i]);
   printf("\n");
+
+#if UIP_CONF_IPV6
+  //uip_ds6_addr_t *lladdr;
+  //lladdr = uip_ds6_get_link_local(-1);
 
   // set MAC address according to EEPROM EUI64 address
   uip_lladdr.addr[0] = lladdr[0];
@@ -157,6 +155,10 @@ int main()
     io_corr_k = 0.590486;
     io_corr_l = 0.0529743;
   }
+
+  // start EMAC service after reading EUI64
+  printf("Starting EMAC service\n");
+  process_start(&emac_lpc1768, NULL);
 
   printf("Starting TCP/IP service\n");
   process_start(&tcpip_process, NULL);          // invokes uip_init();
