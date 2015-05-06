@@ -129,3 +129,38 @@ int main()
 }
 
 #endif /* TEST */
+
+int set_vsc_droop(vsc_droop_t var, float value)
+{
+	// return 0 if ok, return 1 if error
+	switch (var)
+	{
+
+		case SLOPE:
+			t[0].slope = value;
+		break;
+
+		case PMAX:
+			t[0].p_max = value;
+		break;
+	}
+	return 0;
+}
+
+float get_vsc_droop(vsc_droop_t var)
+{
+	float result=0;
+	switch (var)
+	{
+
+		case SLOPE:
+			result = t[0].slope;
+		break;
+
+		case PMAX:
+			result = t[0].p_max;
+		break;
+	}
+	return result;
+}
+
