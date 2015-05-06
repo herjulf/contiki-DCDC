@@ -21,6 +21,7 @@
 //DC-DC converter specific resources
 #define REST_RES_SVECTOR 1
 #define REST_RES_CTRLPARAM 1
+#define REST_RES_VDROOP 1
 #define PLATFORM_HAS_ADC 1
 
 #include "erbium.h"
@@ -852,6 +853,68 @@ ctrlparam_handler(void* request, void* response, uint8_t *buffer, uint16_t prefe
 //
 #endif  /* REST_RES_CTRLPARAM */
 //
+#if REST_RES_VDROOP
+// DCDC converter vsc droop
+RESOURCE(vdroop, METHOD_GET | METHOD_POST, "dc-dc/vdroop", "title=\"DCDC vsc droop\";rt=\"vdroop\"");
+void
+vdroop_handler(void* request, void* response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset)
+{
+  const char *variable = NULL;
+  int coap_method = coap_get_rest_method(request);
+  //PRINTF("Received dc-dc/vdroop POST request:%d\n", coap_method);
+  if (coap_method == METHOD_POST)
+  {
+/*
+      if (REST.get_post_variable(request, "c1", &variable) > 0)
+      {
+          float vsc_c1=atoff(variable);
+          //PRINTF("Received POST request for c1, new value will be set to %f\n", vsc_c1);
+          if (set_vsc_droop(C1, vsc_c1))
+                PRINTF("Error: C1 is not set!");
+      }
+*/
+      if (REST.get_post_variable(request, "slope", &variable) > 0)
+      {
+          float vsc_slope=atoff(variable);
+          //PRINTF("Received POST request for vds, new value will be set to %f\n", vsc_vds);
+          if (set_vsc_droop(SLOPE, vsc_slope))
+                PRINTF("Error: SLOPE is not set!");
+      }
+      if (REST.get_post_variable(request, "p_max", &variable) > 0)
+      {
+          float vsc_pmax=atoff(variable);
+          if (set_vsc_droop(PMAX, vsc_pmax))
+                PRINTF("Error: PMAX is not set!");
+      }
+  }
+  else
+  {
+     //PRINTF("Received GET request for vdroop\n");
+     const uint16_t *accept = NULL;
+     int num = REST.get_header_accept(request, &accept);
+
+      //float vsc_c1=get_vsc_droop(C1);
+      float vsc_slope=get_vsc_droop(SLOPE);
+      float vsc_pmax=get_vsc_droop(PMAX);
+
+     if ((num==0) || (num && accept[0]==REST.type.TEXT_PLAIN))
+     {
+         //PRINTF("Sending CoAP Text/Plain response\n");
+         REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
+         //snprintf((char *)buffer, REST_MAX_CHUNK_SIZE, "c1:\t\t%f\nc2:\t\t%f\np_max:\t\t%f\n", vsc_c1, vsc_c2, vsc_pmax);
+         snprintf((char *)buffer, REST_MAX_CHUNK_SIZE, "slope:\t\t%f\np_max:\t\t%f\n", vsc_slope, vsc_pmax);
+         REST.set_response_payload(response, (uint8_t *)buffer, strlen((char *)buffer));
+     }
+
+     else
+     {
+         PRINTF("Request received, but the server doesn't accept anything other than JSON or TEXT/PLAIN!\n");
+     }
+  }
+}
+//
+#endif  /* REST_RES_VDROOP */
+//
 //
 #endif /* PLATFOR_HAS_ADC */
 ///******************************************************************************/
@@ -897,6 +960,9 @@ PROCESS_THREAD(rest_server_example, ev, data)
 #endif
 #if defined (PLATFORM_HAS_ADC) && REST_RES_CTRLPARAM
   rest_activate_resource(&resource_ctrlparam);
+#endif
+#if defined (PLATFORM_HAS_ADC) && REST_RES_VDROOP
+  rest_activate_resource(&resource_vdroop);
 #endif
 
    PROCESS_END();
