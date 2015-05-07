@@ -295,6 +295,7 @@ void MeanValues(void)
       Vim = 0;
       Iom = 0;
       Iim = 0;
+      VSC_Calc((double)get_svector((svector_t)IO));
     }
 }
 
@@ -306,13 +307,13 @@ void BangBang(void)
 	if(Enable && Vref > 0)
 	{
 		/* Safe maximum voltage limitation (it uses configuration number4) */
-		if (Vout > Vmax)
+		if (Vout*v_out_corr > Vmax)
 			SetState(DISCHARGE);
 		/* Current limitation */
 		else if(Il > Imax)
 		{
 			/* If output is over input it's possible to limit the current with state 2 */
-			if(Vout > Vin)
+			if(Vout*v_out_corr > Vin*v_in_corr)
 				SetState(BOOST_OFF);
 			/* else it must be limited with state 1 */
 			else
@@ -327,10 +328,10 @@ void BangBang(void)
 
 			/* Boost single converter */
 //			if(operatingzone(Vin, Vref, Vout))
-			if(Vref > Vin)
+			if(Vref > Vin*v_in_corr)
 			{
 				/* OFF mode (state 2 for boost converter) */
-				if (Vout > Vref)
+				if (Vout*v_out_corr > Vref)
 				{
 					if(Il > 10)
 						SetState(BOOST_OFF);
@@ -345,7 +346,7 @@ void BangBang(void)
 			else
 			{
 				/* OFF mode (state 1 for buck converter) */
-				if (Vout > Vref)
+				if (Vout*v_out_corr > Vref)
 				{
 					if(Il > 10)
 						SetState(BUCK_OFF);
