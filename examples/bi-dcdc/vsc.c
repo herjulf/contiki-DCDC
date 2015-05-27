@@ -30,14 +30,14 @@
 
 struct vsc
 {
-  double vdmax;	   /* Linear coeff 1: u when p=0 */
+  double v_grid;   /* Linear coeff 1: u when p=0 */
   double slope;    /* Linear coeff 2: slope of voltage droop */
-  double p;        /* Current Power */
+  double v_grid_min; 
   double p_max;
-  double u;        /* Terminal Voltage */
-  double u_max;
-  double i;        /* Terminal Current */
   double i_min;
+  double p;        /* Current Power */
+  double u;        /* Current voltage */
+  double i;        /* Current current */
 };
 
 struct vsc t[MTDC_MAX];
@@ -45,38 +45,58 @@ struct vsc t[MTDC_MAX];
 static void vsc_droop_init(struct vsc *v, int id)
 {
   if(id == 0) {
-    v->vdmax = VSC_MAX;
+    v->v_grid = VSC_MAX;
+    v->v_grid_min = v->v_grid * 0.8;
     v->slope = -0.15;
     v->p_max = 100;
   }
 
   if(id == 1) {
-    v->vdmax = VSC_MAX;
+    v->v_grid = VSC_MAX;
+    v->v_grid_min = v->v_grid * 0.8;
     v->slope = -0.15;
     v->p_max = 100;
   }
 
   v->i_min = 0.1;
-  v->u_max = v->vdmax;
-  v->u = v->u_max;
 }
 
 static void vsc_droop(struct vsc *v, double i)
 {
+  double u, p, th, x;
+
+  v->i = i;
 
   if(i < v->i_min) {
-    v->u = v->u_max;
+    v->u = v->v_grid;
+    v->p = 0;
     return;
   }
-
-  v->u = v->vdmax / (1 - i * v->slope);
-  v->p = v->u * i;
-
-  if(v->p >= v->p_max) {
+  
+  u = v->v_grid / (1 + i * v->slope);
+  p = v->u * i;
+  
+  if(p > v->p_max || u * i > v->p_max ) {
     v->p = v->p_max;
     v->u = v->p_max/i;
+    //err.pmax++;
     return;
   }
+
+  x = v->u/u;
+  th = 0.01;
+
+  if(x > (1+th)) 
+    u = u * (1+th);
+  if(x < (1-th)) 
+    u = u * (1-th);
+
+  if(u < v->v_grid_min) {
+    //err.v_low++;
+    u = v->v_grid_min;
+  }
+  v->u = u;
+  v->p = p;
 }
 
 void VSC_Init(void)
