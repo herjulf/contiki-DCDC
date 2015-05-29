@@ -978,7 +978,7 @@ void do_report(void)
   float i_out =  get_svector(IO);
   float prio;
   
-  printf(" V_IN=%-5.2f V_OUT=%-5.2f I_IN=%-5.2f I_OUT=%-5.2f PRIO=%-3d", 
+  printf(" V_IN=%-5.2f V_OUT=%-5.2f I_IN=%-5.2f I_OUT=%-5.2f PRIO=%-3f", 
 	 v_in, v_out, i_in, i_out, prio);
   
   float v_ref =  get_ctrl_params(VREF);
@@ -991,8 +991,10 @@ void do_report(void)
     printf(" V_REF=%-5.2f V_MAX=%-5.2f I_MAX=%-5.2f V_DIS=%-5.2f V_HYST=%-5.2f\n", 
 	 v_ref, v_max, i_max, v_dis, v_hyst);
 
-    printf(" V_VSC=%-5.2f V_MAX=%-5.2f I_MAX=%-5.2f\n", 
+    printf(" V_VSC=%-5.2f V_MAX=%-5.2f I_MAX=%-5.2f", 
 	 v_ref, v_max, i_max);
+
+    printf(" V_VSC_FREQ=%d\n", vsc_freq);
 }
 
 PROCESS(report_process, "report process");

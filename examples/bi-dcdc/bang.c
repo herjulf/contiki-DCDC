@@ -1,5 +1,6 @@
 #include "lpc17xx.h"
 #include "bang.h"
+#include "vsc.h"
 
 state_t CurrentState;
 
@@ -21,8 +22,18 @@ void TimerInit(void)
 	NVIC_SetPriority(RIT_IRQn, 1);
 }
 
+int sec;
+
 void RIT_IRQHandler(void)
 {
+
+  sec++;
+  if(sec == 999 ) {
+    sec = 0;
+    vsc_freq = vsc_cnt;
+    vsc_cnt = 0;
+  }
+
 	LPC_RIT->RICTRL &= ~0x08;					// Disable Repetitive Interrupt Timer (RIT)
 
 	// Shoot-through & Reserve current protection
@@ -56,6 +67,7 @@ void RIT_IRQHandler(void)
 		LPC_GPIO2->FIOSETL = 0x0006;
 	else if(CurrentState == DISCHARGE)			// Buck L ON Buck H OFF - Boost L ON Boost H OFF
 		LPC_GPIO2->FIOSETL = 0x0005;
+
 }
 
 void SetState(state_t state)

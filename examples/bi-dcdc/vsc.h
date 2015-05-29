@@ -30,3 +30,6 @@ int set_vsc_droop(vsc_droop_t var, float value);
 float get_vsc_droop(vsc_droop_t var);
 
 void VSC_Calc(double i);
+
+extern volatile unsigned int vsc_cnt;
+extern volatile unsigned int vsc_freq;

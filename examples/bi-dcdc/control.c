@@ -47,7 +47,7 @@
 #include "bang-config.h"
 #include "vsc.h"
 
-#define MEAN_SAMPLES 5000
+#define MEAN_SAMPLES 50
 
 int Vref, Imax, Vmax, Vdis, Vhyst;
 int Vout, Vin, Il;
@@ -55,6 +55,9 @@ int Vo, Vi, Io, Ii;
 int i, Vom, Vim, Iom, Iim, Prio, Enable;
 int Iref;
 int user_allowed;
+
+unsigned volatile int vsc_cnt;
+unsigned volatile int vsc_freq;
 
 extern int ADC[4];
 extern state_t CurrentState;
@@ -295,6 +298,7 @@ void MeanValues(void)
       Vim = 0;
       Iom = 0;
       Iim = 0;
+      vsc_cnt++;
       VSC_Calc((double)get_svector((svector_t)IO));
     }
 }
